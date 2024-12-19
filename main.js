@@ -1,31 +1,35 @@
 import express from "express";
-import connectDB from "./config/db.js";  // Import with .js extension
+import dotenv from "dotenv";
+import connectDB from "./config/db_connect.js";
+import {customerAuthRoute} from "./routes/authRoutes.js"
+
+// Load environment variables
+dotenv.config();
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3001; // Default to 5000 if PORT is undefined
 
 // Connect to the database
 connectDB();
 
-
-// Built-in middlewares for JSON and URL-encoded data
+// Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-// app.use("login",loginRouter);
-// app.use("logout",logoutRouter)
-// app.use("verify",verifyRouter);
-
 // Define routes
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
-app.get('/new', (req, res) => {
-  res.send('Hello World new!');
+app.get("/new", (req, res) => {
+  res.send("Hello World new!");
 });
+
+
+app.use("/api/auth",customerAuthRoute );
+
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

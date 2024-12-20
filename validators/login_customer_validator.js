@@ -1,14 +1,18 @@
 const { z } = require("zod");
 
-const loginSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required" })
-    .trim()
-    .email({ message: "Invalid email address" }),
-
+// Define the schema for login
+const loginCustomerSchema = z.object({
+  login: z
+    .string()
+    .refine((val) => /^[0-9]{10,15}$/.test(val) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val), {
+      message: "Login must be a valid phone number (10-15 digits) or a valid email address",
+    }),
   password: z
-    .string({ required_error: "Password is required" })
-    .min(5, { message: "Password must be at least 5 characters long" }),
+    .string()
+    .min(6, "Password must be at least 6 characters long")
+    .refine((val) => /[a-zA-Z]/.test(val) && /\d/.test(val), {
+      message: "Password must contain at least one letter and one number",
+    }),
 });
 
-module.exports = loginSchema;
+module.exports = loginCustomerSchema;

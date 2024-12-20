@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema(
   {
@@ -24,9 +24,13 @@ const customerSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    age: {
+      type: Number, // Storing age
+      required: false,
+    },
     photo: {
       type: String,
-      default: null, // Can store Cloudinary or S3 URL
+      default: null,
     },
     isVerified: {
       type: Boolean,
@@ -38,21 +42,31 @@ const customerSchema = new mongoose.Schema(
     },
     verifyCode: {
       type: String,
-      default: null, // Optional field for email/phone verification code
+      default: null,
     },
     verifyCodeExpiry: {
       type: Date,
-      default: null, // Optional field for expiry time
+      default: null,
     },
     resetPasswordCode: {
       type: String,
-      default: null, // Optional field for password reset
+      default: null,
     },
   },
   {
-    timestamps: true, // Automatically add createdAt and updatedAt fields
+    timestamps: true,
   }
 );
+
+// Middleware to calculate age before saving
+customerSchema.pre("save", function (next) {
+  if (this.dateOfBirth) {
+    const ageDifMs = Date.now() - this.dateOfBirth.getTime();
+    const ageDate = new Date(ageDifMs);
+    this.age = Math.abs(ageDate.getUTCFullYear() - 1970);
+  }
+  next();
+});
 
 // Export the model
 const Customer = mongoose.model("Customer", customerSchema);

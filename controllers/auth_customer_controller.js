@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt"); // For password hashing
-const customerSchema = require("../validators/register_customer_validator");
-const loginSchema = require('../validators/login_customer_validator')
+const registerCustomerSchema = require("../validators/register_customer_validator");
+const loginCustomerSchema = require('../validators/login_customer_validator')
 const Customer = require('../models/customer_model')
 const { z } = require("zod"); // Ensure zod is installed
 
@@ -10,45 +10,46 @@ const router = express.Router();
 // Register route
 const registerCustomer = async (req, res) => {
   try {
-    // Validate the request body using Zod schema
-    const validatedData = customerSchema.parse(req.body);
+    // Validate the request body
+    const validatedData = registerCustomerSchema.parse(req.body);
 
-    // Check if customer email or phone number already exists
+    // Check if phone number or email already exists
     const existingCustomer = await Customer.findOne({
       $or: [
-        { email: validatedData.email },
         { phoneNumber: validatedData.phoneNumber },
+        { email: validatedData.email },
       ],
     });
 
     if (existingCustomer) {
-      return res.status(400).json({ error: "Email or phone number already registered" });
+      return res.status(400).json({
+        error: "Phone number or email already registered",
+      });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
-    // Create the customer object for saving to the database
+    // Create a new customer object
     const newCustomer = new Customer({
-      fullname: validatedData.fullname,
-      email: validatedData.email,
+      customerName: validatedData.customerName,
       phoneNumber: validatedData.phoneNumber,
-      dateOfBirth: validatedData.dateOfBirth || null, // Optional field
-      photo: validatedData.photo || null, // Optional field
-      isVerified: false, // Default value for new registrations
+      email: validatedData.email,
+      dateOfBirth: new Date(validatedData.dateOfBirth),
       password: hashedPassword,
-      verifyCode: null, // Initially null, set later during verification process
-      verifyCodeExpiry: null, // Initially null
-      resetPasswordCode: null, // Initially null
+      photo: null, // Can be updated later with an upload service
+      isVerified: false, // Default for new registrations
+      verifyCode: null, // Can implement email/phone verification later
+      verifyCodeExpiry: null,
+      resetPasswordCode: null,
     });
 
-    // Save to the database
+    // Save the customer to the database
     await newCustomer.save();
 
     // Respond with success
     res.status(201).json({ message: "Customer registered successfully" });
   } catch (error) {
-    // Handle validation errors or unexpected issues
     if (error instanceof z.ZodError) {
       return res.status(400).json({ errors: error.errors });
     }
@@ -58,46 +59,44 @@ const registerCustomer = async (req, res) => {
 };
 
 
+
 const loginCustomer = async (req, res) => {
   try {
-    // Validate and extract email and password from request body
-    const validatedData = loginSchema.parse(req.body);
-    const { email, password } = validatedData;  // Extract email and password from validated data
+    // console.log("Request Body:", req.body); 
+    // Ensure that the request body is valid
+    const validatedData = loginCustomerSchema.parse(req.body);  // Parse using zod
 
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
-    }
-
-    // Find customer by email
-    const customer = await Customer.findOne({ email });
-    if (!customer) {
-      return res.status(404).json({ error: "Customer not found" });
-    }
-
-    // Compare passwords
-    const isPasswordValid = await bcrypt.compare(password, customer.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // Check if customer is verified (optional)
-    if (!customer.isVerified) {
-      return res.status(403).json({ error: "Customer account is not verified" });
-    }
-
-    // Generate token (if required)
-    const token = jwt.sign({ id: customer._id, email: customer.email }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+    // Your logic to check the login credentials
+    const customer = await Customer.findOne({
+      $or: [
+        { customerEmail: validatedData.login },
+        { phoneNo: validatedData.login }
+      ]
     });
 
-    // Respond with success
-    res.status(200).json({ message: "Customer logged in successfully", token });
+    if (!customer) {
+      return res.status(400).json({ error: "Invalid email or phone number" });
+    }
+
+    // Check password here (assuming you're using bcrypt for hashing)
+    const isPasswordValid = await bcrypt.compare(validatedData.password, customer.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Invalid password" });
+    }
+
+    // If credentials are valid, generate a token or return success
+    res.status(200).json({ message: "Login successful", customer });
+
   } catch (error) {
-    console.error("Error during customer login:", error);
+    // Handle validation errors or unexpected issues
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ errors: error.errors });
+    }
+    console.error("Error during login:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 

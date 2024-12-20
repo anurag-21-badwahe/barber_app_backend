@@ -1,10 +1,9 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-// we are using this schema as the sub model for salon schema
-// Barber Schema
+// Barber Schema as a submodel for the Salon schema
 const barberSchema = new mongoose.Schema(
   {
-    name: {
+    barberName: {
       type: String,
       required: true,
       trim: true,
@@ -19,8 +18,20 @@ const barberSchema = new mongoose.Schema(
       enum: ["available", "unavailable"],
       default: "available",
     },
+    age: {
+      type: Number,
+      required: true, // Assuming age is required
+    },
+    experience: {
+      type: Number,
+      required: true, // Assuming experience is required in years
+    },
+    photo: {
+      type: String,
+      default: null, // Optional: For storing a photo URL (like Cloudinary or S3)
+    },
   },
   { _id: false } // Prevents auto-generating an _id for subdocuments
 );
 
-export default barberSchema;
+module.exports = barberSchema;

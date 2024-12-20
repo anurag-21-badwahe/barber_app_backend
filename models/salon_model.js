@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import barberSchema from "./Barber.js"; // Import Barber schema
+const mongoose = require("mongoose")
+const barberSchema = require('./barber_model')// Import Barber schema
 
 // Define the Salon schema
 const salonSchema = new mongoose.Schema(
@@ -59,4 +59,4 @@ const salonSchema = new mongoose.Schema(
 // Export the model
 const Salon = mongoose.model("Salon", salonSchema);
 
-export default Salon;
+module.exports = Salon;

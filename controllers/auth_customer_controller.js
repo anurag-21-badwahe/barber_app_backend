@@ -10,15 +10,19 @@ const router = express.Router();
 // Register route
 const registerCustomer = async (req, res) => {
   try {
-    // Validate request body using Zod schema
+    // Validate the request body using Zod schema
     const validatedData = customerSchema.parse(req.body);
 
-    // Check if email already exists
+    // Check if customer email or phone number already exists
     const existingCustomer = await Customer.findOne({
-      email: validatedData.email,
+      $or: [
+        { email: validatedData.email },
+        { phoneNumber: validatedData.phoneNumber },
+      ],
     });
+
     if (existingCustomer) {
-      return res.status(400).json({ error: "Email already registered" });
+      return res.status(400).json({ error: "Email or phone number already registered" });
     }
 
     // Hash the password
@@ -26,15 +30,19 @@ const registerCustomer = async (req, res) => {
 
     // Create the customer object for saving to the database
     const newCustomer = new Customer({
-      customerName: validatedData.customerName,
+      fullname: validatedData.fullname,
       email: validatedData.email,
       phoneNumber: validatedData.phoneNumber,
-      dateOfBirth: validatedData.dateOfBirth,
-      role: validatedData.role || "customer",
+      dateOfBirth: validatedData.dateOfBirth || null, // Optional field
+      photo: validatedData.photo || null, // Optional field
+      isVerified: false, // Default value for new registrations
       password: hashedPassword,
+      verifyCode: null, // Initially null, set later during verification process
+      verifyCodeExpiry: null, // Initially null
+      resetPasswordCode: null, // Initially null
     });
 
-    // Save to database
+    // Save to the database
     await newCustomer.save();
 
     // Respond with success
@@ -44,63 +52,54 @@ const registerCustomer = async (req, res) => {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ errors: error.errors });
     }
-    console.error("Error during registration:", error);
+    console.error("Error during customer registration:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+
 const loginCustomer = async (req, res) => {
   try {
+    // Validate and extract email and password from request body
     const validatedData = loginSchema.parse(req.body);
-
-    const { email, password } = validatedData;
+    const { email, password } = validatedData;  // Extract email and password from validated data
 
     // Validate input
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
-    // Check if customer exists
+    // Find customer by email
     const customer = await Customer.findOne({ email });
     if (!customer) {
-      return res.status(404).json({ message: "Customer not found" });
+      return res.status(404).json({ error: "Customer not found" });
     }
 
-    // Compare password
+    // Compare passwords
     const isPasswordValid = await bcrypt.compare(password, customer.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        id: customer._id,
-        email: customer.email,
-        role: customer.role,
-      },
-      JWT_SECRET,
-      { expiresIn: "1h" } // Token valid for 1 hour
-    );
+    // Check if customer is verified (optional)
+    if (!customer.isVerified) {
+      return res.status(403).json({ error: "Customer account is not verified" });
+    }
 
-    // Respond with token
-    return res.status(200).json({
-      message: "Login successful",
-      token,
-      customer: {
-        id: customer._id,
-        name: customer.customerName,
-        email: customer.email,
-        role: customer.role,
-      },
+    // Generate token (if required)
+    const token = jwt.sign({ id: customer._id, email: customer.email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
+
+    // Respond with success
+    res.status(200).json({ message: "Customer logged in successfully", token });
   } catch (error) {
     console.error("Error during customer login:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
 
 module.exports = {
   registerCustomer,

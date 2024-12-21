@@ -1,7 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db_connect");
-const customerAuthRoute = require("./routes/authRoutes");
+const authRoute = require("./routes/authRoutes");
+const userRoute = require("./routes/userRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -26,7 +27,9 @@ app.get("/new", (req, res) => {
 });
 
 
-app.use("/api/auth",customerAuthRoute );
+app.use("/api/auth",authRoute);
+app.use("/api/users",userRoute);
+
 
 
 // Start the server

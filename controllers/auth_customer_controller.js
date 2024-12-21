@@ -4,6 +4,7 @@ const registerCustomerSchema = require("../validators/register_customer_validato
 const loginCustomerSchema = require('../validators/login_customer_validator')
 const Customer = require('../models/customer_model')
 const { z } = require("zod"); // Ensure zod is installed
+const jwt = require("jsonwebtoken")
 
 const router = express.Router();
 
@@ -84,8 +85,20 @@ const loginCustomer = async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
+    const token = jwt.sign(
+      {
+        id: customer._id,
+        role: customer.role,
+        isVerified : customer.isVerified
+      },
+      process.env.JWT_SECRET, // Ensure this environment variable is set
+      {
+        expiresIn: "1h", // Token validity
+      }
+    );
+    
     // If credentials are valid, generate a token or return success
-    res.status(200).json({ message: "Login successful", customer });
+    res.status(200).json({ message: "Login successful", token });
 
   } catch (error) {
     // Handle validation errors or unexpected issues

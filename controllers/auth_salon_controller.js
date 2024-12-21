@@ -1,6 +1,7 @@
 // const { generateToken } = require("../utils/generateToken");
 // const { comparePassword } = require("../utils/bcryptUtils");
 const {z} = require("zod")
+const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt');
 const Salon = require('../models/salon_model'); // Assuming Salon model is in this path
 const { salonSchema } = require('../validators/register_salon_validator'); // Ensure this path is correct
@@ -86,8 +87,20 @@ const loginSalon = async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
+    const token = jwt.sign(
+      {
+        id: Salon._id,
+        role: Salon.role,
+        isVerified : Salon.isVerified
+      },
+      process.env.JWT_SECRET, // Ensure this environment variable is set
+      {
+        expiresIn: "1h", // Token validity
+      }
+    );
+    
     // If credentials are valid, generate a token or return success
-    res.status(200).json({ message: "Login successful", salon });
+    res.status(200).json({ message: "Login successful", token });
 
   } catch (error) {
     // Handle validation errors or unexpected issues

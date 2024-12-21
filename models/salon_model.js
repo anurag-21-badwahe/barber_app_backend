@@ -9,6 +9,10 @@ const salonSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    role : {
+      type: String,
+      default: "Barber",
+    },
     salonEmail: {
       type: String,
       required: true,
@@ -28,6 +32,7 @@ const salonSchema = new mongoose.Schema(
     },
     photo: {
       type: String,
+      required : true,
       default: null, // Optional: Store Cloudinary or S3 URL
     },
     isVerified: {

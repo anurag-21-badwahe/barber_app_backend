@@ -3,7 +3,7 @@ const { z } = require("zod");
 // Creating validation schema for Customer model
 const registerCustomerSchema = z.object({
   customerName: z.string().min(3, "Customer name is required and must be at least 3 characters"),
-  phoneNumber: z.string().regex(/^\d{10}$/, "Invalid phone number"),
+  phoneNumber: z.string().regex(/^\+91\d{10}$/, "Invalid phone number, must start with +91 followed by 10 digits"),
   email: z.string().email("Invalid email address"),
   dateOfBirth: z.string().refine((value) => !isNaN(Date.parse(value)), {
     message: "Invalid date format",

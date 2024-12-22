@@ -5,6 +5,9 @@ const loginCustomerSchema = require('../validators/login_customer_validator')
 const Customer = require('../models/customer_model')
 const { z } = require("zod"); // Ensure zod is installed
 const jwt = require("jsonwebtoken")
+// const { sendOTP } = require("../services/verificatonEmailTwillo");
+const {sendVerificationEmail} = require("../services/verificationEmail")
+
 
 const router = express.Router();
 
@@ -28,25 +31,38 @@ const registerCustomer = async (req, res) => {
       });
     }
 
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
-    // Create a new customer object
+    // Create a new customer object (don't save it yet)
     const newCustomer = new Customer({
       customerName: validatedData.customerName,
       phoneNumber: validatedData.phoneNumber,
       email: validatedData.email,
-      gender : validatedData.gender,
+      gender: validatedData.gender,
       dateOfBirth: new Date(validatedData.dateOfBirth),
       password: hashedPassword,
-      photo: null, // Can be updated later with an upload service
+      photo: null, 
       isVerified: false, // Default for new registrations
-      verifyCode: null, // Can implement email/phone verification later
+      verifyCode: otp, 
       verifyCodeExpiry: null,
       resetPasswordCode: null,
     });
 
-    // Save the customer to the database
+    // Send the OTP to the email first
+    const emailResult = await sendVerificationEmail(validatedData.email, validatedData.customerName, otp);
+
+    if (!emailResult.success) {
+      // If email sending failed, return an error and do not save the customer
+      return res.status(500).json({ error: emailResult.message });
+    }
+
+    // If email is sent successfully, save the customer to the database
     await newCustomer.save();
 
     // Respond with success
@@ -59,6 +75,7 @@ const registerCustomer = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 

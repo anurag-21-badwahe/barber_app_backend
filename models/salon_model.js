@@ -11,7 +11,7 @@ const salonSchema = new mongoose.Schema(
     },
     role : {
       type: String,
-      default: "Barber",
+      default: "salon",
     },
     salonEmail: {
       type: String,

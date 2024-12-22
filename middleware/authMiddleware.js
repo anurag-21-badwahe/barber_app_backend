@@ -31,7 +31,7 @@ const verifyToken = (req, res, next) => {
     
     // Add decoded user to request object
     req.user = decoded;
-    // console.log("Decoded User",req.user);
+    console.log("Decoded User",req.user);
 
     // Check token expiration
     if (decoded.exp < Date.now() / 1000) {

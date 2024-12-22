@@ -10,11 +10,16 @@ const barberSchema = new mongoose.Schema(
     },
     role : {
       type: String,
-      default: "Barber",
+      default: "barber",
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other", "prefer not to say"],
+      required: true,
     },
     phoneNo: {
       type: String,
-      required: true,
+      // required: true,
       trim: true,
     },
     status: {

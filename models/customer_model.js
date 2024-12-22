@@ -7,10 +7,15 @@ const customerSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    role : {
+    role: {
       type: String,
-      enum: ["Customer", "Admin"],
-      default: "Customer",
+      enum: ["customer", "admin"],
+      default: "customer",
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other", "prefer not to say"],
+      required: true,
     },
     phoneNumber: {
       type: String,

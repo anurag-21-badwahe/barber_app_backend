@@ -36,6 +36,7 @@ const registerCustomer = async (req, res) => {
       customerName: validatedData.customerName,
       phoneNumber: validatedData.phoneNumber,
       email: validatedData.email,
+      gender : validatedData.gender,
       dateOfBirth: new Date(validatedData.dateOfBirth),
       password: hashedPassword,
       photo: null, // Can be updated later with an upload service

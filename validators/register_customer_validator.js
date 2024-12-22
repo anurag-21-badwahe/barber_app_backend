@@ -9,6 +9,9 @@ const registerCustomerSchema = z.object({
     message: "Invalid date format",
     path: ["dateOfBirth"],
   }),
+  gender: z.enum(["male", "female", "other", "prefer not to say"], {
+    errorMap: () => ({ message: "Invalid gender" }),  // Custom error message
+  }),
   photo: z.string().url().optional(),
   password: z.string().min(6, "Password must be at least 6 characters"),
   password_confirmation: z.string().min(6, "Password confirmation must be at least 6 characters"),

@@ -1,4 +1,8 @@
-const { v2: cloudinary } = require("cloudinary");
+const cloudinary = require('cloudinary').v2;
+
+// Load environment variables
+require('dotenv').config();
+
 const fs = require("fs");
 
 cloudinary.config({
@@ -11,11 +15,12 @@ cloudinary.config({
 const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) {
-      console.error("Please provide a valid file path");
+        throw new Error("Please provide a valid file path");
     }
 
     const result = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
+      timeout: 60000
     });
 
     //file has been uploaded successfully

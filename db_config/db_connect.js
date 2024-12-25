@@ -1,18 +1,36 @@
-const mongoose = require("mongoose")
-const dotenv = require("dotenv");
+const mongoose = require('mongoose');
 
-// Load environment variables from .env file
-dotenv.config();
-mongoose.set('strictQuery', true);
 
-// Database connection function
+mongoose.set('strictQuery', false);
 const connectDB = async () => {
   try {
-    const connect = await mongoose.connect(process.env.MONGODB_URI);
-    console.log(`MongoDB Connected: ${connect.connection.host}`);
+    const options = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 30000, // Timeout after 30s
+      socketTimeoutMS: 45000, // Close sockets after 45s
+      connectTimeoutMS: 30000, // Connection timeout
+      retryWrites: true,
+      family: 4 // Use IPv4, skip trying IPv6
+    };
+
+    await mongoose.connect(process.env.MONGODB_URI, options);
+    console.log('MongoDB Connected Successfully');
   } catch (error) {
-    console.error('Error connecting to MongoDB', error);
-    process.exit(1); // Exit the process if connection fails
+    console.error('MongoDB Connection Error:', error);
+    // Retry logic
+    setTimeout(connectDB, 5000); // Retry after 5 seconds
   }
 };
+
+// Add connection event listeners
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB Error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB Disconnected, attempting to reconnect...');
+  setTimeout(connectDB, 5000);
+});
+
 module.exports = connectDB;

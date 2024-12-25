@@ -31,17 +31,25 @@ const salonSchema = new mongoose.Schema(
       trim: true,
     },
     photo: {
+      type: [String], // Changed from String to Array of Strings
+      required: true,
+    },
+    city: { 
       type: String,
-      required : true,
-      default: null, // Optional: Store Cloudinary or S3 URL
+      required: true,
+    },
+    pinCode : {
+      type: Number,
+      required: true,
     },
     isVerified: {
       type: Boolean,
       default: false,
     },
     barbers: {
-      type: [barberSchema], // Array of Barber subdocuments
-      default: [],
+      type: [barberSchema], 
+      required : true,
+      default: []
     },
     verifyCode: {
       type: String,

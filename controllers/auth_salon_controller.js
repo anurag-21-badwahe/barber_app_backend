@@ -4,58 +4,97 @@ const {z} = require("zod")
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt');
 const Salon = require('../models/salon_model'); // Assuming Salon model is in this path
+const Barber = require('../models/barber_model'); // Assuming Barber model is in this path
 const { salonSchema } = require('../validators/register_salon_validator'); // Ensure this path is correct
-const {loginSalonSchema} = require("../validators/login_salon_validator")
+const {loginSalonSchema} = require("../validators/login_salon_validator");
+const uploadOnCloudinary = require("../utils/cloudinary");
+
 
 const registerSalon = async (req, res) => {
-  // console.log(req.body)
   try {
-    const validatedData = salonSchema.parse(req.body); // Validate using Zod
-
-    // Check if salon email or phone number already exists
-    const existingSalon = await Salon.findOne({
-      $or: [
-        { salonEmail: validatedData.salonEmail },
-        { phoneNo: validatedData.phoneNo },
-      ],
-    });
-
-    if (existingSalon) {
-      return res.status(400).json({ error: "Email or phone number already registered" });
+    if (typeof req.body.barbers === 'string') {
+      req.body.barbers = JSON.parse(req.body.barbers);
     }
 
-    // Hash the password
+    const validatedData = salonSchema.parse(req.body);
+    const barberImages = req.files?.barberImages || [];
+    const salonImages = req.files?.salonImages;
+
+    // Validate barber images count matches barbers count
+    if (barberImages.length !== validatedData.barbers.length) {
+      return res.status(400).json({ 
+        error: `Expected ${validatedData.barbers.length} barber images, got ${barberImages.length}` 
+      });
+    }
+
+    // Validate salon images
+    if (!salonImages || salonImages.length < 3 || salonImages.length > 5) {
+      return res.status(400).json({ 
+        error: "Salon must upload at least 3 and at most 5 images" 
+      });
+    }
+
+    console.log("Salon Images:", salonImages);
+    salonImages.forEach(image => console.log(image.path));
+    console.log("Barber Images:", barberImages);
+
+    // Upload salon images
+    const salonImgUrls = [];
+    for (const image of salonImages) {
+      const uploadedImage = await uploadOnCloudinary(image.path);
+      if (!uploadedImage) {
+        return res.status(400).json({ error: "Failed to upload salon images" });
+      }
+      salonImgUrls.push(uploadedImage.url);
+    }
+
+    // Upload barber images and map to barbers
+    const barbersWithPhotos = await Promise.all(
+      validatedData.barbers.map(async (barber, index) => {
+        const uploadedImage = await uploadOnCloudinary(barberImages[index].path);
+        if (!uploadedImage) {
+          return res.status(400).json({ 
+            error: `Failed to upload image for barber ${barber.barberName}` 
+          });
+        }
+        return {
+          ...barber,
+          photo: uploadedImage.url
+        };
+      })
+    );
+
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
-    // Create the salon object for saving to the database
     const newSalon = new Salon({
       salonName: validatedData.salonName,
       salonEmail: validatedData.salonEmail,
       password: hashedPassword,
       phoneNo: validatedData.phoneNo,
-      photo: validatedData.photo || null, // Optional field
-      barbers: validatedData.barbers || [], // Optional field, defaults to empty array
-      isVerified: false, // Default to false for new registrations
-      verifyCode: null, // Initially null
-      verifyCodeExpiry: null, // Initially null
-      resetPasswordCode: null, // Initially null
+      photo: salonImgUrls,
+      city: validatedData.city,
+      pinCode: validatedData.pinCode,
+      barbers: barbersWithPhotos,
+      isVerified: false,
+      verifyCode: null,
+      verifyCodeExpiry: null,
+      resetPasswordCode: null,
     });
 
-    // Save to the database
     await newSalon.save();
 
-    // Respond with success
     res.status(201).json({
       message: "Salon registered successfully",
       salon: {
         salonName: newSalon.salonName,
         salonEmail: newSalon.salonEmail,
         phoneNo: newSalon.phoneNo,
-        // Optionally return more fields
+        photo: newSalon.photo,
+        barbers: newSalon.barbers
       },
     });
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     if (error instanceof z.ZodError) {
       return res.status(400).json({ errors: error.errors });
     }

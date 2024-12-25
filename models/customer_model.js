@@ -38,6 +38,14 @@ const customerSchema = new mongoose.Schema(
       type: Number, // Storing age
       required: false,
     },
+    city : {
+      type: String,
+      required: true,
+    },
+    pinCode : {
+      type: Number,
+      required: true,
+    },
     photo: {
       type: String,
       default: null,

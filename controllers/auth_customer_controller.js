@@ -44,12 +44,17 @@ const registerCustomer = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
+
+   
+
     // Create a new customer object (don't save it yet)
     const newCustomer = new Customer({
       customerName: validatedData.customerName,
       phoneNumber: validatedData.phoneNumber,
       email: validatedData.email,
       gender: validatedData.gender,
+      city : validatedData.city,
+      pinCode: validatedData.pinCode,
       dateOfBirth: new Date(validatedData.dateOfBirth),
       password: hashedPassword,
       photo: null, 

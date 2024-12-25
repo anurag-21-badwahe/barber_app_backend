@@ -9,7 +9,7 @@ const loginCustomerSchema = z.object({
     }),
   password: z
     .string()
-    .min(6, "Password must be at least 6 characters long")
+    .min(8, "Password must be at least 8 characters long")
     .refine((val) => /[a-zA-Z]/.test(val) && /\d/.test(val), {
       message: "Password must contain at least one letter and one number",
     }),

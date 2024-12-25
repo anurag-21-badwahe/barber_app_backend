@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const connectDB = require("./config/db_connect");
+const connectDB = require("./db_config/db_connect");
 const authRoute = require("./routes/authRoutes");
 const userRoute = require("./routes/userRoutes");
 
@@ -26,8 +26,9 @@ app.get("/new", (req, res) => {
   res.send("Hello World new!");
 });
 
-
+//APi designed
 app.use("/api/auth",authRoute);
+
 app.use("/api/users",userRoute);
 
 

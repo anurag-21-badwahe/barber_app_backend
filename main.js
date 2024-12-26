@@ -8,7 +8,7 @@ const userRoute = require("./routes/userRoutes");
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001; // Default to 5000 if PORT is undefined
+const port = process.env.PORT || 3000; // Default to 5000 if PORT is undefined
 
 // Connect to the database
 connectDB();

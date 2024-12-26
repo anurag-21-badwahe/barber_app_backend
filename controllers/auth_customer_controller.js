@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken")
 // const { sendOTP } = require("../services/verificatonEmailTwillo");
 const {sendVerificationEmail} = require("../services/verificationEmail");
 const { sendResetPasswordEmail } = require("../services/resetPasswordEmail");
+require('dotenv').config();
 
 
 const router = express.Router();
@@ -16,6 +17,7 @@ const router = express.Router();
 const registerCustomer = async (req, res) => {
   try {
     // Validate the request body
+    console.log("Request Body:", req.body);
     const validatedData = registerCustomerSchema.parse(req.body);
 
     // Check if phone number or email already exists

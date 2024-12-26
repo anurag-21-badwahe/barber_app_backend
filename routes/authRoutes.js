@@ -28,7 +28,7 @@ router.post("/customer/verify", verifyCustomer);
 router.post("/salon/login", loginSalon);
 
 // Salon Register
-router.post("/salon/register", registerSalon);
+router.post("/customer/register", registerCustomer);
 
 //Request reset password code
 router.post("/customer/request-reset", requestPasswordReset);

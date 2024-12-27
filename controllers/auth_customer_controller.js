@@ -107,15 +107,15 @@ const registerCustomer = async (req, res) => {
 
 const loginCustomer = async (req, res) => {
   try {
-    // console.log("Request Body:", req.body); 
+    console.log("Request Body:", req.body); 
     // Ensure that the request body is valid
     const validatedData = loginCustomerSchema.parse(req.body);  // Parse using zod
 
     // Your logic to check the login credentials
     const customer = await Customer.findOne({
       $or: [
-        { customerEmail: validatedData.login },
-        { phoneNo: validatedData.login }
+        { email: validatedData.login },
+        { phoneNumber: validatedData.login }
       ]
     });
 

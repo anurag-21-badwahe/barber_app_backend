@@ -1,18 +1,8 @@
 const { z } = require("zod");
 
-// Define the schema for login
 const loginCustomerSchema = z.object({
-  login: z
-    .string()
-    .refine((val) => /^[0-9]{10,15}$/.test(val) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val), {
-      message: "Login must be a valid phone number (10-15 digits) or a valid email address",
-    }),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters long")
-    .refine((val) => /[a-zA-Z]/.test(val) && /\d/.test(val), {
-      message: "Password must contain at least one letter and one number",
-    }),
+  login: z.string().min(1, "Login is required"), // Ensure login is a non-empty string
+  password: z.string().min(8, "Password must be at least 8 characters long") // Ensure password is at least 8 characters long
 });
 
 module.exports = loginCustomerSchema;

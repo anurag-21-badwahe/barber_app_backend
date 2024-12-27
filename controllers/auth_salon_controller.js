@@ -1,6 +1,6 @@
 // const { generateToken } = require("../utils/generateToken");
 // const { comparePassword } = require("../utils/bcryptUtils");
-const {z} = require("zod")
+const z = require("zod")
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt');
 const Salon = require('../models/salon_model'); // Assuming Salon model is in this path
@@ -13,7 +13,15 @@ const uploadOnCloudinary = require("../utils/cloudinary");
 const registerSalon = async (req, res) => {
   try {
     if (typeof req.body.barbers === 'string') {
-      req.body.barbers = JSON.parse(req.body.barbers);
+      try {
+        req.body.barbers = JSON.parse(req.body.barbers);
+      } catch (parseError) {
+        return res.status(400).json({
+          error: "Invalid barbers data format",
+          details: parseError.message,
+          receivedData: req.body.barbers
+        });
+      }
     }
 
     const validatedData = salonSchema.parse(req.body);

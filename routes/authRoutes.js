@@ -13,7 +13,6 @@ const upload = require("../middleware/multerMiddleware");
 
 
 
-// Salon Register
 
 
 // Salon Register - use upload middleware directly

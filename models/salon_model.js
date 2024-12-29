@@ -2,29 +2,42 @@ const mongoose = require("mongoose");
 
 const SalonSchema = new mongoose.Schema(
   {
-    name: { 
-      type: String, 
-      required: [true, "Salon name is required"], 
-      trim: true 
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Owner",
+      required: true,
+    }, // Relation to Owner model
+    name: {
+      type: String,
+      required: [true, "Salon name is required"],
+      trim: true,
     },
     location: {
-      address: { 
-        type: String, 
-        required: [true, "Address is required"] 
+      address: {
+        type: String,
+        required: [true, "Address is required"],
       },
-      city: { 
-        type: String, 
-        required: [true, "City is required"] 
+      city: {
+        type: String,
+        required: [true, "City is required"],
       },
-      state: { 
-        type: String, 
-        required: [true, "State is required"] 
+      state: {
+        type: String,
+        required: [true, "State is required"],
+      },
+      country: {
+        type: String,
+        default: "India",
+      },
+      pinCode: {
+        type: String,
+        required: [true, "Pin Code is required"],
       },
       coordinates: {
-        type: { 
-          type: String, 
-          default: "Point", 
-          enum: ["Point"] 
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
         },
         coordinates: {
           type: [Number],
@@ -38,16 +51,16 @@ const SalonSchema = new mongoose.Schema(
       },
     },
     contact: {
-      phone: { 
-        type: String, 
-        required: [true, "Phone number is required"], 
-        match: [/^\d{10}$/, "Invalid phone number format"] 
+      phone: {
+        type: String,
+        required: [true, "Phone number is required"],
+        match: [/^\d{10}$/, "Invalid phone number format"],
       },
-      email: { 
-        type: String, 
-        required: [true, "Email is required"], 
-        lowercase: true, 
-        match: [/^\S+@\S+\.\S+$/, "Invalid email format"] 
+      email: {
+        type: String,
+        required: [true, "Email is required"],
+        lowercase: true,
+        match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
       },
       website: {
         type: String,
@@ -56,88 +69,67 @@ const SalonSchema = new mongoose.Schema(
       socialMedia: {
         instagram: {
           type: String,
-          match: [/^https?:\/\/(www\.)?instagram\.com\/.+$/, "Invalid Instagram URL"],
+          match: [
+            /^https?:\/\/(www\.)?instagram\.com\/.+$/,
+            "Invalid Instagram URL",
+          ],
         },
         facebook: {
           type: String,
-          match: [/^https?:\/\/(www\.)?facebook\.com\/.+$/, "Invalid Facebook URL"],
+          match: [
+            /^https?:\/\/(www\.)?facebook\.com\/.+$/,
+            "Invalid Facebook URL",
+          ],
         },
       },
     },
-    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "Owner", required: true }, // Relation to Owner
-    rating: { 
-      type: Number, 
-      default: 0, 
-      min: 0, 
-      max: 5 
+    typeOfSalon : {
+      type: String,
+      enum: ["male", "female", "Unisex"],
+      required: true,
     },
-    operationalHours: {
-      monday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: false } },
-      tuesday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: false } },
-      wednesday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: false } },
-      thursday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: false } },
-      friday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: false } },
-      saturday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: false } },
-      sunday: { shifts: [{ start: String, end: String }], isClosed: { type: Boolean, default: true } },
-    },
-    capacity: {
-      totalChairs: { 
-        type: Number, 
-        required: [true, "Total chairs capacity is required"], 
-        min: [1, "Total chairs must be at least 1"] 
-      },
-      availableChairs: { 
-        type: Number, 
-        min: [0, "Available chairs cannot be negative"] 
-      },
-      currentWaitTime: { 
-        type: Number, 
-        default: 0, 
-        min: [0, "Wait time cannot be negative"] 
-      },
-    },
+     
+ // Operation Hours in connected 
+    // capacity: {
+    //   totalChairs: {
+    //     type: Number,
+    //     required: [true, "Total chairs capacity is required"],
+    //     min: [1, "Total chairs must be at least 1"],
+    //   },
+    //   availableChairs: {
+    //     type: Number,
+    //     min: [0, "Available chairs cannot be negative"],
+    //   },
+    //   currentWaitTime: {
+    //     type: Number,
+    //     default: 0,
+    //     min: [0, "Wait time cannot be negative"],
+    //   },
+    // },
     photos: {
       type: [String],
       validate: {
         validator: function (v) {
           return v.length >= 3 && v.length <= 5;
         },
-        message: "Photos must contain between 3 and 5 URLs"
+        message: "Photos must contain between 3 and 5 URLs",
       },
-      match: [/^https?:\/\/.+\..+$/, "Invalid photo URL format"]
+      match: [/^https?:\/\/.+\..+$/, "Invalid photo URL format"],
     },
-    settings: {
-      allowOnlineBooking: { 
-        type: Boolean, 
-        default: true 
-      },
-      maxAdvanceBookingDays: { 
-        type: Number, 
-        default: 30, 
-        min: [1, "Advance booking days must be at least 1"] 
-      },
-      cancelationPolicy: { 
-        type: String, 
-        trim: true 
-      },
-      notifications: {
-        sms: { 
-          type: Boolean, 
-          default: true 
-        },
-        email: { 
-          type: Boolean, 
-          default: true 
-        },
-      },
+    operationDays : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "operationHours",
+      required: true,
     },
-    employees: [{ 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "Barber" 
-    }],
+    employees: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Barber",
+      },
+    ],
   },
-  { 
-    timestamps: true 
+  {
+    timestamps: true,
   }
 );
 

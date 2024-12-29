@@ -13,7 +13,7 @@ const barberSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female", "other", "prefer not to say"],
+      enum: ["male", "female"],
       required: true,
     },
     phoneNo: {
@@ -27,7 +27,7 @@ const barberSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true, // Assuming age is required
+      required: false, // Assuming age is required
     },
     experience: {
       type: Number,
@@ -35,21 +35,13 @@ const barberSchema = new mongoose.Schema(
     },
     photo: {
       type: String,
+      required : true,
       default: null, // Optional: For storing a photo URL (like Cloudinary or S3)
     },
     salonId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Salon", // Reference to the Salon collection
       required: true,
-    },
-    schedule: {
-      monday: { shifts: [{ start: String, end: String }], isOff: Boolean },
-      tuesday: { shifts: [{ start: String, end: String }], isOff: Boolean },
-      wednesday: { shifts: [{ start: String, end: String }], isOff: Boolean },
-      thursday: { shifts: [{ start: String, end: String }], isOff: Boolean },
-      friday: { shifts: [{ start: String, end: String }], isOff: Boolean },
-      saturday: { shifts: [{ start: String, end: String }], isOff: Boolean },
-      sunday: { shifts: [{ start: String, end: String }], isOff: Boolean },
     },
   },
   {

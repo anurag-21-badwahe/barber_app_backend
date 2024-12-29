@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-// Barber Schema as a submodel for the Salon schema
 const barberSchema = new mongoose.Schema(
   {
     barberName: {
@@ -8,7 +7,7 @@ const barberSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    role : {
+    role: {
       type: String,
       default: "barber",
     },
@@ -19,7 +18,6 @@ const barberSchema = new mongoose.Schema(
     },
     phoneNo: {
       type: String,
-      // required: true,
       trim: true,
     },
     status: {
@@ -39,8 +37,26 @@ const barberSchema = new mongoose.Schema(
       type: String,
       default: null, // Optional: For storing a photo URL (like Cloudinary or S3)
     },
+    salonId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Salon", // Reference to the Salon collection
+      required: true,
+    },
+    schedule: {
+      monday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+      tuesday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+      wednesday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+      thursday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+      friday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+      saturday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+      sunday: { shifts: [{ start: String, end: String }], isOff: Boolean },
+    },
   },
-  { _id: false } // Prevents auto-generating an _id for subdocuments
+  {
+    timestamps: true, // Automatically add `createdAt` and `updatedAt` fields
+  }
 );
 
-module.exports = barberSchema;
+const Barber = mongoose.model("Barber", barberSchema);
+
+module.exports = Barber;

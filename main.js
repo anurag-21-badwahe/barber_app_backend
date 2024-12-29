@@ -8,7 +8,7 @@ const userRoute = require("./routes/userRoutes");
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000; // Default to 5000 if PORT is undefined
+const PORT = process.env.PORT || 3000; // Default to 5000 if PORT is undefined
 
 // Connect to the database
 connectDB();
@@ -34,6 +34,7 @@ app.use("/api/users",userRoute);
 
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.listen(PORT, 
+  async () =>{ await connectDB()
+  console.log(`Example app listening at http://localhost:${PORT}`)
+})

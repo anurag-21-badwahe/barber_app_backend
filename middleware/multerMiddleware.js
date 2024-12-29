@@ -21,6 +21,8 @@ const storage = multer.diskStorage({
       cb(null, `barber-${uniqueSuffix}${ext}`);
     } else if (file.fieldname === 'salonImages') {
       cb(null, `salon-${uniqueSuffix}${ext}`);
+    } else if (file.fieldname === 'ownerImage') {
+      cb(null, `owner-${uniqueSuffix}${ext}`);
     } else {
       cb(new Error('Invalid field name'), false);
     }
@@ -44,7 +46,8 @@ const upload = multer({
   }
 }).fields([
   { name: 'barberImages', maxCount: 10 },
-  { name: 'salonImages', maxCount: 5 }
+  { name: 'salonImages', maxCount: 5 },
+  {name : 'ownerImages', maxCount: 1}
 ]);
 
 module.exports = upload;

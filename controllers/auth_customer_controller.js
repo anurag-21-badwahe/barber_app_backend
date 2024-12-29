@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt"); // For password hashing
-const registerCustomerSchema = require("../validators/register_customer_validator");
+const registerCustomerValidator = require("../validators/register_customer_validator");
 const loginCustomerSchema = require('../validators/login_customer_validator')
 const Customer = require('../models/customer_model')
 const { z } = require("zod"); // Ensure zod is installed
@@ -17,8 +17,8 @@ const router = express.Router();
 const registerCustomer = async (req, res) => {
   try {
     // Validate the request body
-    console.log("Request Body:", req.body);
-    const validatedData = registerCustomerSchema.parse(req.body);
+    // console.log("Request Body:", req.body);
+    const validatedData = registerCustomerValidator.parse(req.body);
 
     // Check if phone number or email already exists
     const existingCustomer = await Customer.findOne({
@@ -107,7 +107,7 @@ const registerCustomer = async (req, res) => {
 
 const loginCustomer = async (req, res) => {
   try {
-    console.log("Request Body:", req.body); 
+    // console.log("Request Body:", req.body); 
     // Ensure that the request body is valid
     const validatedData = loginCustomerSchema.parse(req.body);  // Parse using zod
 

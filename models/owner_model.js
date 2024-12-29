@@ -9,6 +9,19 @@ const OwnerSchema = new mongoose.Schema(
     isPhoneVerified: { type: Boolean, default: false },
     password: { type: String, required: true },
     role: { type: String, default: "owner" },
+
+    verifyCode: {
+      type: String,
+      default: null,
+    },
+    verifyCodeExpiry: {
+      type: Date,
+      default: null,
+    },
+    resetPasswordCode: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

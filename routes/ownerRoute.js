@@ -17,7 +17,7 @@ const { get } = require("mongoose");
 
 
 // Owner registration
-router.post('/owners/register', upload, registerOwner);
+router.post('/owners/register', registerOwner);
 
 // Owner Login
 router.post("/owners/login", loginOwner);
@@ -29,7 +29,7 @@ router.post("/owners/verify", verifyOwner);
 router.get("/owners/:id/salons", getSalonsByOwnerId);
 
 //Update owner details
-router.put("/owners/:id", upload, updateOwner);
+// router.put("/owners/:id", updateOwner);
 
 //Request reset password code
 router.post("/owner/request-reset", requestPasswordReset);

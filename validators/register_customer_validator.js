@@ -1,7 +1,7 @@
 const { z } = require("zod");
 
 // Creating validation schema for Customer model
-const registerCustomerSchema = z
+const registerCustomerValidator = z
   .object({
     customerName: z
       .string()
@@ -42,4 +42,4 @@ const registerCustomerSchema = z
     path: ["password_confirmation"],
   });
 
-module.exports = registerCustomerSchema;
+module.exports = registerCustomerValidator;

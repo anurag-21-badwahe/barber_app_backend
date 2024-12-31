@@ -22,6 +22,10 @@ const OwnerSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    resetPasswordCodeExpiry: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

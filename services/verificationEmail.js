@@ -97,4 +97,4 @@ async function sendVerificationEmail(email, username, verifyCode) {
 }
 
 
-module.exports = {sendVerificationEmail}
+module.exports = sendVerificationEmail;

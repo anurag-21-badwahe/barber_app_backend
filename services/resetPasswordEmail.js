@@ -69,7 +69,7 @@ async function sendResetPasswordEmail(email, username, resetCode) {
     </div>
     <div class="content">
       <p class = "name">Hello ${username},</p>
-      <p>Thank you for registering. Please use the following reset password code to complete your reset password:</p>
+      <p>Our Team are grateful to help you. Please use the following reset password code to complete your reset password:</p>
       <h2>${resetCode}</h2>
       <p>If you did not request this code, please ignore this email.</p>
     </div>

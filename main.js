@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./db_config/db_connect");
 const authRoute = require("./routes/authRoutes");
 const userRoute = require("./routes/userRoutes");
+const salonRoute = require("./routes/salonRoutes"); 
+const ownerRoute = require("./routes/ownerRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -30,6 +32,11 @@ app.get("/new", (req, res) => {
 app.use("/api/auth",authRoute);
 
 app.use("/api/users",userRoute);
+
+// app.use('/api/salons',salonRoute);
+
+app.use('/api/owner',ownerRoute);
+
 
 
 

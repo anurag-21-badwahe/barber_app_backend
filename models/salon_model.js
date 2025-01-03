@@ -74,38 +74,20 @@ const SalonSchema = new mongoose.Schema(
             "Invalid Instagram URL",
           ],
         },
-        facebook: {
+        youtube : {
           type: String,
           match: [
-            /^https?:\/\/(www\.)?facebook\.com\/.+$/,
-            "Invalid Facebook URL",
+            /^https?:\/\/(www\.)?youtube\.com\/.+$/,
+            "Invalid Youtube URL",
           ],
         },
       },
     },
     typeOfSalon : {
       type: String,
-      enum: ["male", "female", "Unisex"],
+      enum: ["male", "female", "unisex"],
       required: true,
     },
-     
- // Operation Hours in connected 
-    // capacity: {
-    //   totalChairs: {
-    //     type: Number,
-    //     required: [true, "Total chairs capacity is required"],
-    //     min: [1, "Total chairs must be at least 1"],
-    //   },
-    //   availableChairs: {
-    //     type: Number,
-    //     min: [0, "Available chairs cannot be negative"],
-    //   },
-    //   currentWaitTime: {
-    //     type: Number,
-    //     default: 0,
-    //     min: [0, "Wait time cannot be negative"],
-    //   },
-    // },
     photos: {
       type: [String],
       validate: {
@@ -115,11 +97,6 @@ const SalonSchema = new mongoose.Schema(
         message: "Photos must contain between 3 and 5 URLs",
       },
       match: [/^https?:\/\/.+\..+$/, "Invalid photo URL format"],
-    },
-    operationDays : {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "operationHours",
-      required: true,
     },
     employees: [
       {

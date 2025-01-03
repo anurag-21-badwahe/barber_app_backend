@@ -6,7 +6,7 @@ const isValidEmail = (value) => {
 };
 
 const isValidPhone = (value) => {
-  return /^[0-9]{10,15}$/.test(value);
+  return /^[0-9]{10}$/.test(value);  // Limited to 10 digits for better accuracy
 };
 
 // Password validation schema
@@ -21,18 +21,11 @@ const passwordSchema = z.string()
 const loginOwnerValidator = z.object({
   login: z
     .string()
-    .min(1, "Login credential is required")
-    .transform((val) => val.trim().toLowerCase())
-    .refine(
-      (val) => isValidEmail(val) || isValidPhone(val),
-      {
-        message: "Please enter a valid email address or phone number",
-      }
-    )
-    .transform((val) => ({
-      value: val,
-      type: isValidEmail(val) ? "email" : "phone"
-    })),
+    .min(1, { message: "Login credential is required." })
+    .transform((val) => val.trim())  // No automatic lowercase to avoid issues with case-sensitive emails
+    .refine((val) => isValidEmail(val) || isValidPhone(val), {
+      message: "Please enter a valid email or phone number.",
+    }),
   password: passwordSchema
 });
 

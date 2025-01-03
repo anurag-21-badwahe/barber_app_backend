@@ -15,8 +15,8 @@ router.get("/customer",verifyToken,authorizeRoles("customer"),(req,res)=>{
 })
 
 // Only Salon can access this route
-router.get("/salon",verifyToken,authorizeRoles("salon"),(req,res)=>{
-    res.json({message : "Welcome Salon"})
+router.get("/owner",verifyToken,authorizeRoles("owner"),(req,res)=>{
+    res.json({message : "Welcome Owner"})
 })
 
 module.exports = router;

@@ -1,8 +1,11 @@
 const bcrypt = require("bcryptjs");
 const Owner = require("../../models/owner_model");
 const jwt = require("jsonwebtoken");  
-const registerOwnerValidator = require("../validators/registerOwnerValidator");   
+const registerOwnerValidator = require("../../validators/owner/owner_register_validator");   
 const loginOwnerValidator = require("../../validators/owner/owner_login_validator");
+const sendVerificationEmail = require("../../services/verificationEmail");
+const z = require("zod");
+
 
 // Register Owner Controller
 const registerOwner = async (req, res) => {
@@ -50,7 +53,7 @@ const registerOwner = async (req, res) => {
     // Save the owner to the database
     
     
-    const emailResult = await sendVerificationEmail(validatedData.email, validatedData.OwnerName, otp);
+    const emailResult = await sendVerificationEmail(validatedData.email, validatedData.fullname, otp);
     
     if (!emailResult.success) {
         // If email sending failed, return an error and do not save the owner
@@ -84,22 +87,26 @@ const registerOwner = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error registering owner:", error);
-    return res.status(500).json({ message: "Server error. Please try again later." });
+     if (error instanceof z.ZodError) {
+          return res.status(400).json({ errors: error.errors });
+        }
+        console.error("Error during Owner registration:", error);
+        res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 const loginOwner = async (req, res) => {
   try {
-    // console.log("Request Body:", req.body); 
     // Ensure that the request body is valid
     const validatedData = loginOwnerValidator.parse(req.body);  // Parse using zod
+
+    
 
     // Your logic to check the login credentials
     const owner = await Owner.findOne({
       $or: [
         { email: validatedData.login },
-        { phoneNumber: validatedData.login }
+        { phoneNo: validatedData.login }
       ]
     });
 
@@ -179,9 +186,9 @@ const verifyOwner = async (req, res) => {
       }
   
       // Check if owner is already verified
-      if (owner.isVerified) {
+      if (owner.isEmailVerified) {
         return res.status(400).json({
-          error: "Owner is already verified"
+          error: "Owner Email's is already verified"
         });
       }
   
@@ -200,7 +207,7 @@ const verifyOwner = async (req, res) => {
       }
   
       // Update owner verification status
-      owner.isVerified = true;
+      owner.isEmailVerified = true;
       owner.verifyCode = null;      // Clear the verification code
       owner.verifyCodeExpiry = null; // Clear the expiry
       await owner.save();

@@ -342,7 +342,7 @@ const resetPassword = async (req, res) => {
     // Update customer with new password and clear reset code fields
     customer.password = hashedPassword;
     customer.resetPasswordCode = null;
-    customer.resetPasswordExpiry = null;
+    customer.resetPasswordCodeExpiry = null;
     await customer.save();
 
     // Generate new JWT token
@@ -373,12 +373,6 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 module.exports = {
   registerCustomer,
   loginCustomer,
@@ -386,3 +380,9 @@ module.exports = {
   requestPasswordReset,
   resetPassword  
 };
+
+
+
+
+
+

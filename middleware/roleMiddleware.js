@@ -8,7 +8,7 @@ const authorizeRoles = (requiredRole) => {
       }
   
       // If the user is a salon, do not require verification
-      if (role === 'salon') {
+      if (role === 'owner') {
         return next(); // Salon users are allowed, even if they are not verified
       }
   

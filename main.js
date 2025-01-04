@@ -5,6 +5,7 @@ const authRoute = require("./routes/authRoutes");
 const userRoute = require("./routes/userRoutes");
 const salonRoute = require("./routes/salonRoutes"); 
 const ownerRoute = require("./routes/ownerRoutes");
+const barberRoute = require("./routes/barberRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // Define routes
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -31,9 +33,11 @@ app.get("/new", (req, res) => {
 //APi designed
 app.use("/api/auth",authRoute);
 
-app.use("/api/users",userRoute);
+app.use("/api/user",userRoute);
 
-// app.use('/api/salons',salonRoute);
+app.use('/api/barber',barberRoute);
+
+app.use('/api/salon',salonRoute);
 
 app.use('/api/owner',ownerRoute);
 

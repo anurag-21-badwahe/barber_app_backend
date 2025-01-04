@@ -1,11 +1,12 @@
-// const express = require("express");
-// const router = express.Router();
+const express = require("express");
+const router = express.Router();
 // const Salon = require("../models/salon_model");
-// const upload = require("../middleware/multerMiddleware");
-// const { registerSalon } = require("../controllers/auth_salon_controller");
+const upload = require("../middleware/multerMiddleware");
+const { createSalon,getSalonDetails } = require("../controllers/salon/salon_basic_controller");
 
-// // Salon Registration Flow
-// router.post("/register/basic", upload, registerSalon);
+// Salon Registration Flow
+
+router.post("/register/basics", upload, createSalon);
 // // router.post("/register/barbers", verifyToken, addBarbers);
 // // router.post("/register/services", verifyToken, addServices);
 // // router.post("/register/operation-hours", verifyToken, addOperationHours);
@@ -19,10 +20,10 @@
 // router.post("/salon/login", loginSalon);
 
 // //get all salons
-// router.get("/salons", getAllSalons);
+// router.get("/salon", getAllSalons);
 
-// //get salon by id
-// router.get("/salons/:id", getSalonById);
+//get salon by id
+router.get("/:id", getSalonDetails);
 
 
 // //update salon details
@@ -37,4 +38,4 @@
 // router.put("/salons/:id/assign", assignSalonToOwner);
 
 
-// module.exports = router;
+module.exports = router;

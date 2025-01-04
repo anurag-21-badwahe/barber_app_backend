@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
       cb(null, `barber-${uniqueSuffix}${ext}`);
     } else if (file.fieldname === 'salonImages') {
       cb(null, `salon-${uniqueSuffix}${ext}`);
-    } else if (file.fieldname === 'ownerImage') {
+    } else if (file.fieldname === 'ownerImages') {
       cb(null, `owner-${uniqueSuffix}${ext}`);
     } else {
       cb(new Error('Invalid field name'), false);

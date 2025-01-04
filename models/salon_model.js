@@ -74,7 +74,7 @@ const SalonSchema = new mongoose.Schema(
             "Invalid Instagram URL",
           ],
         },
-        youtube : {
+        youtube: {
           type: String,
           match: [
             /^https?:\/\/(www\.)?youtube\.com\/.+$/,
@@ -83,7 +83,7 @@ const SalonSchema = new mongoose.Schema(
         },
       },
     },
-    typeOfSalon : {
+    typeOfSalon: {
       type: String,
       enum: ["male", "female", "unisex"],
       required: true,
@@ -98,12 +98,6 @@ const SalonSchema = new mongoose.Schema(
       },
       match: [/^https?:\/\/.+\..+$/, "Invalid photo URL format"],
     },
-    employees: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Barber",
-      },
-    ],
   },
   {
     timestamps: true,

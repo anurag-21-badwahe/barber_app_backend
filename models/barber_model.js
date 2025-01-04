@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const barberSchema = new mongoose.Schema(
   {
+    salonId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Salon", 
+      required: true,
+    },
     barberName: {
       type: String,
       required: true,
@@ -27,21 +32,16 @@ const barberSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: false, // Assuming age is required
+      required: false, 
     },
     experience: {
       type: Number,
-      required: true, // Assuming experience is required in years
+      required: true,
     },
     photo: {
       type: String,
       required : true,
-      default: null, // Optional: For storing a photo URL (like Cloudinary or S3)
-    },
-    salonId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Salon", // Reference to the Salon collection
-      required: true,
+      default: null, 
     },
   },
   {

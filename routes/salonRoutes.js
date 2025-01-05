@@ -1,18 +1,20 @@
 const express = require("express");
 const router = express.Router();
-// const Salon = require("../models/salon_model");
 const upload = require("../middleware/multerMiddleware");
 const { createSalon,getSalonDetails } = require("../controllers/salon/salon_basic_controller");
+const {setOperationalHours,getOperationalHours,deleteOperationalHours} = require("../controllers/salon/salon_operation_hours_controller");
+const verifyToken = require("../middleware/authMiddleware");
 
 // Salon Registration Flow
 
 router.post("/register/basics", upload, createSalon);
-// // router.post("/register/barbers", verifyToken, addBarbers);
-// // router.post("/register/services", verifyToken, addServices);
-// // router.post("/register/operation-hours", verifyToken, addOperationHours);
-// // router.post("/register/images", verifyToken, addImages);
-// // router.post("/register/setting", verifyToken, addSettings);
-// // router.post("/register/booking", verifyToken, addBooking);
+
+router.post("/:salonId/operation-hours",setOperationalHours);
+
+router.get("/:salonId/operation-hours",getOperationalHours);
+
+router.delete("/:salonId/operation-hours",deleteOperationalHours);
+
 
 
 

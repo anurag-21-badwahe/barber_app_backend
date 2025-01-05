@@ -1,4 +1,4 @@
-const { salonSchema } = require("../validators/register_salon_validator");
+const mongoose = require("mongoose");
 
 const ServiceSchema = new mongoose.Schema(
   {
@@ -23,5 +23,5 @@ const ServiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Service = mongoose.model("Service", ServiceSchema);
-module.exports = Service;
+module.exports =  mongoose.model("Service", ServiceSchema);
+

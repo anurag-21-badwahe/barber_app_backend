@@ -1,8 +1,8 @@
 const OperationalHoursModel = require("../../models/operation_model");
 
 const setOperationalHours = async (req, res) => {
-  console.log("Request Body:", req.body);
-  console.log("Request Params:", req.params);
+//   console.log("Request Body:", req.body);
+//   console.log("Request Params:", req.params);
 
   const { salonId } = req.params;
   const operationalHours = req.body;

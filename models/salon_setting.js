@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const salonSettingSchema = new mongoose.Schema({
     salonId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,4 +29,4 @@ const salonSettingSchema = new mongoose.Schema({
     }
 });
 
-const SalonSetting = mongoose.model('SalonSetting', salonSettingSchema);
+module.exports = mongoose.model('SalonSetting', salonSettingSchema);

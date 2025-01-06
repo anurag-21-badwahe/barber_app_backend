@@ -11,12 +11,12 @@ const salonRatingSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  salon: {
+  salonId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Salon',
     required: true
   },
-  user: {
+  customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Customer',
     required: true

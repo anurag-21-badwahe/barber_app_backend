@@ -6,7 +6,7 @@ const userRoute = require("./routes/userRoutes");
 const salonRoute = require("./routes/salonRoutes"); 
 const ownerRoute = require("./routes/ownerRoutes");
 const barberRoute = require("./routes/barberRoutes");
-
+const salonRatingRoute = require("./routes/salonRatingRoutes");
 // Load environment variables
 dotenv.config();
 
@@ -40,6 +40,8 @@ app.use('/api/barber',barberRoute);
 app.use('/api/salon',salonRoute);
 
 app.use('/api/owner',ownerRoute);
+
+app.use('/api/salon-rating',salonRatingRoute);
 
 
 
